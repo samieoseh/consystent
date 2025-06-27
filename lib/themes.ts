@@ -61,29 +61,36 @@ export const darkTheme = {
     onError: "rgb(105, 0, 5)",
     errorContainer: "rgb(147, 0, 10)",
     onErrorContainer: "rgb(255, 180, 171)",
-    background: "rgb(32, 26, 24)",
-    onBackground: "rgb(237, 224, 220)",
-    surface: "rgb(32, 26, 24)",
-    onSurface: "rgb(237, 224, 220)",
-    surfaceVariant: "rgb(83, 67, 62)",
-    onSurfaceVariant: "rgb(216, 194, 186)",
-    outline: "rgb(160, 141, 134)",
-    outlineVariant: "rgb(83, 67, 62)",
+
+    background: "rgb(10, 10, 10)", // near black
+    onBackground: "rgb(235, 235, 235)", // soft white
+    surface: "rgb(15, 15, 15)",
+    onSurface: "rgb(230, 230, 230)",
+
+    surfaceVariant: "rgb(25, 25, 25)",
+    onSurfaceVariant: "rgb(200, 200, 200)",
+
+    outline: "rgb(100, 100, 100)",
+    outlineVariant: "rgb(70, 70, 70)",
+
     shadow: "rgb(0, 0, 0)",
     scrim: "rgb(0, 0, 0)",
-    inverseSurface: "rgb(237, 224, 220)",
-    inverseOnSurface: "rgb(54, 47, 44)",
+
+    inverseSurface: "rgb(230, 230, 230)",
+    inverseOnSurface: "rgb(20, 20, 20)",
     inversePrimary: "rgb(164, 61, 0)",
+
     elevation: {
       level0: "transparent",
-      level1: "rgb(43, 34, 30)",
-      level2: "rgb(50, 38, 34)",
-      level3: "rgb(57, 43, 38)",
-      level4: "rgb(59, 45, 39)",
-      level5: "rgb(63, 48, 42)",
+      level1: "rgb(18, 18, 18)",
+      level2: "rgb(22, 22, 22)",
+      level3: "rgb(26, 26, 26)",
+      level4: "rgb(30, 30, 30)",
+      level5: "rgb(34, 34, 34)",
     },
-    surfaceDisabled: "rgba(237, 224, 220, 0.12)",
-    onSurfaceDisabled: "rgba(237, 224, 220, 0.38)",
-    backdrop: "rgba(59, 45, 40, 0.4)",
+
+    surfaceDisabled: "rgba(235, 235, 235, 0.12)",
+    onSurfaceDisabled: "rgba(235, 235, 235, 0.38)",
+    backdrop: "rgba(0, 0, 0, 0.5)",
   },
 };
