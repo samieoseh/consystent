@@ -1,0 +1,46 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "294b6798-874d-4838-924c-ef7629a25256",
+  "prevId": "ca873070-a854-47da-ba50-9bd797e35c22",
+  "tables": {
+    "goals": {
+      "name": "goals",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {
+      "\"users\"": "\"goals\""
+    },
+    "columns": {
+      "\"goals\".\"name\"": "\"goals\".\"title\""
+    }
+  },
+  "internal": {
+    "indexes": {}
+  }
+}
