@@ -52,7 +52,16 @@ export default function NewGoal() {
                 mode="outlined"
                 label="Goal Title"
                 placeholder="Goal Title e.g Run 40km in 3 months"
-                theme={{ colors: { background: colors.surfaceVariant } }}
+                theme={{
+                  colors: {
+                    background: colors.surfaceVariant,
+                    onSurfaceVariant: colors.outlineVariant,
+                  },
+                }}
+                style={{
+                  height: 40,
+                }}
+                autoFocus
               />
               <TextInput
                 mode="outlined"
@@ -61,7 +70,12 @@ export default function NewGoal() {
                 multiline
                 numberOfLines={4}
                 style={{ minHeight: 100 }}
-                theme={{ colors: { background: colors.surfaceVariant } }}
+                theme={{
+                  colors: {
+                    background: colors.surfaceVariant,
+                    onSurfaceVariant: colors.outlineVariant,
+                  },
+                }}
               />
             </View>
 
