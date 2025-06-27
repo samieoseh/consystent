@@ -20,13 +20,13 @@ export const lightTheme = {
     errorContainer: "rgb(255, 218, 214)",
     onErrorContainer: "rgb(65, 0, 2)",
 
-    background: "rgb(255, 251, 255)",
+    background: "rgb(255, 255, 255)",
     onBackground: "rgb(32, 26, 24)",
     surface: "rgb(255, 251, 255)",
     onSurface: "rgb(32, 26, 24)",
-    surfaceVariant: "rgb(245, 222, 214)",
+    surfaceVariant: "rgb(250, 250, 250)",
     onSurfaceVariant: "rgb(83, 67, 62)",
-    outline: "rgb(133, 115, 109)",
+    outline: "rgb(230, 230, 230)",
     outlineVariant: "rgb(216, 194, 186)",
     shadow: "rgb(0, 0, 0)",
     scrim: "rgb(0, 0, 0)",
@@ -74,10 +74,10 @@ export const darkTheme = {
     surface: "rgb(15, 15, 15)",
     onSurface: "rgb(230, 230, 230)",
 
-    surfaceVariant: "rgb(25, 25, 25)",
+    surfaceVariant: "rgb(16, 16, 16)",
     onSurfaceVariant: "rgb(200, 200, 200)",
 
-    outline: "rgb(120, 120, 120)",
+    outline: "rgb(35, 35, 35)",
     outlineVariant: "rgb(80, 80, 80)",
 
     shadow: "rgb(0, 0, 0)",
