@@ -2,10 +2,10 @@ import Container from "@/components/ui/Container";
 import Header from "@/components/ui/Header";
 import React from "react";
 
-export default function IndexPage() {
+export default function NewGoal() {
   return (
     <Container>
-      <Header title={"Good Afternoon"}></Header>
+      <Header title={"New Goal"} enableArrowBack></Header>
     </Container>
   );
 }

@@ -34,7 +34,6 @@ export default function TabLayout() {
         <BottomNavigation.Bar
           theme={paperTheme.colors}
           navigationState={state}
-          activeColor={paperTheme.colors.colors.primary}
           activeIndicatorStyle={{
             backgroundColor: paperTheme.colors.colors.primaryContainer,
           }}
@@ -84,6 +83,19 @@ export default function TabLayout() {
           title: "Home",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="goals"
+        options={{
+          title: "Goal",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="bullseye-arrow"
+              color={color}
+              size={26}
+            />
           ),
         }}
       />

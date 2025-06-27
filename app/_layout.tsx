@@ -11,6 +11,7 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as SystemUI from "expo-system-ui";
 import { Platform, View } from "react-native";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
@@ -39,6 +40,8 @@ export default function RootLayout() {
       ? { ...MD3DarkTheme, colors: themeColors }
       : { ...MD3LightTheme, colors: themeColors };
 
+  SystemUI.setBackgroundColorAsync(paperTheme.colors.colors.background);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -62,6 +65,7 @@ export default function RootLayout() {
 
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="goals" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
         </PaperProvider>
