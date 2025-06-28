@@ -31,11 +31,7 @@ export default function System() {
             size={20}
             onPress={() => console.log("filter pressed")}
           />
-          {/* <IconButton
-            icon="calendar-outline"
-            size={20}
-            onPress={() => console.log("Calendar pressed")}
-          /> */}
+
           <IconButton
             icon="help-circle-outline"
             size={20}
@@ -49,8 +45,8 @@ export default function System() {
         style={{
           backgroundColor:
             colorScheme === "dark"
-              ? lightTheme.colors.primary
-              : darkTheme.colors.primary,
+              ? darkTheme.colors.primary
+              : lightTheme.colors.primary,
         }}
         onPress={() => {
           router.push("/systems/new-system");

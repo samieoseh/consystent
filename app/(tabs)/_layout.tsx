@@ -35,7 +35,7 @@ export default function TabLayout() {
           theme={paperTheme.colors}
           navigationState={state}
           activeIndicatorStyle={{
-            backgroundColor: paperTheme.colors.colors.primaryContainer,
+            backgroundColor: paperTheme.colors.colors.primary,
           }}
           safeAreaInsets={insets}
           style={{
