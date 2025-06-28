@@ -12,7 +12,6 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
-import { Platform, View } from "react-native";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -46,26 +45,11 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <PaperProvider theme={paperTheme.colors}>
-          {Platform.OS === "android" && (
-            <View
-              style={{
-                height: insets.top,
-                backgroundColor:
-                  colorScheme === "light"
-                    ? lightTheme.colors.background
-                    : darkTheme.colors.background,
-              }}
-            />
-          )}
-
-          <StatusBar
-            style={colorScheme === "dark" ? "light" : "dark"}
-            translucent
-          />
+          <StatusBar style={"auto"} translucent />
 
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="goals" options={{ headerShown: false }} />
+            <Stack.Screen name="systems" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
         </PaperProvider>

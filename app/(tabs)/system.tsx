@@ -8,7 +8,7 @@ import React from "react";
 import { Pressable, useColorScheme, View } from "react-native";
 import { IconButton } from "react-native-paper";
 
-export default function Goals() {
+export default function System() {
   const colorScheme = useColorScheme();
   const { data: goals, isLoading, isError, error } = useGoals();
 
@@ -19,7 +19,7 @@ export default function Goals() {
 
   return (
     <Container>
-      <Header title={"Goals"}>
+      <Header title={"Systems"}>
         <View className="flex items-center flex-row">
           <IconButton
             icon="magnify"
@@ -53,7 +53,7 @@ export default function Goals() {
               : darkTheme.colors.primary,
         }}
         onPress={() => {
-          router.push("/goals/new");
+          router.push("/systems/new-system");
         }}
       >
         <MaterialCommunityIcons name="plus" color={"#fff"} size={26} />

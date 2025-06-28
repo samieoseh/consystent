@@ -87,9 +87,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="goals"
+        name="system"
         options={{
-          title: "Goal",
+          title: "Systems",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="bullseye-arrow"
