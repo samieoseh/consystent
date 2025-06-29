@@ -1,6 +1,7 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { db } from "@/lib/db";
 import { darkTheme, lightTheme } from "@/lib/themes";
+import { store } from "@/store";
 import {
   DarkTheme,
   DefaultTheme,
@@ -16,6 +17,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
 import migrations from "../drizzle/migrations";
 import "../global.css";
 
@@ -44,21 +46,23 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <PaperProvider theme={paperTheme.colors}>
-            <StatusBar style={"auto"} translucent />
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <PaperProvider theme={paperTheme.colors}>
+              <StatusBar style={"auto"} translucent />
 
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="systems" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-          </PaperProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="systems" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+            </PaperProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </Provider>
     </GestureHandlerRootView>
   );
 }

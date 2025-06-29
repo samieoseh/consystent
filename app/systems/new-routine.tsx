@@ -1,26 +1,37 @@
 import { ThemedText } from "@/components/ThemedText";
 import Container from "@/components/ui/Container";
 import Header from "@/components/ui/Header";
+import {
+  addRoutine,
+  removeRoutine,
+  Routine,
+  selectCreateSystemRoutines,
+} from "@/features/createSystemSlice";
 import { darkAlhpa, lightAlhpa } from "@/lib/constants";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
+  BottomSheetScrollView,
   BottomSheetTextInput,
-  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Text } from "@react-navigation/elements";
 import React, { useCallback, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
+  FlatList,
   Keyboard,
+  ListRenderItem,
   Pressable,
-  ScrollView,
   TouchableWithoutFeedback,
   useColorScheme,
   View,
 } from "react-native";
 import {
   Button,
+  IconButton,
   Modal,
   Portal,
   RadioButton,
@@ -31,17 +42,14 @@ import { z } from "zod";
 
 const RoutineSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
-  cadence: z.enum(["daily", "weekdays", "specific", "flexible"], {
+  cadence: z.enum(["daily", "weekdays", "specific"], {
     required_error: "Please choose how often you want to do this system",
   }),
   startTime: z.date().optional(),
-  repeatOn: z.array(z.string()).optional(),
   habits: z
     .array(
       z.object({
         title: z.string().min(1, "Habit title is required"),
-        duration: z.number().min(1, "Duration must be at least 1 minute"),
       })
     )
     .optional(),
@@ -50,19 +58,11 @@ const RoutineSchema = z.object({
 type FormValues = z.infer<typeof RoutineSchema>;
 
 export default function NewRoutine() {
+  const routines = useAppSelector(selectCreateSystemRoutines);
   const colorScheme = useColorScheme();
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [selectedDays, setSelectedDays] = useState<number[]>([]);
   const { colors } = useTheme();
-  const [isFocused, setIsFocused] = useState(false);
-  const [visible, setVisible] = useState(false);
 
-  const showModal = () => {
-    Keyboard.dismiss();
-    setVisible(true);
-  };
-  const hideModal = () => setVisible(false);
-
+  const appDispatch = useAppDispatch();
   // ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -75,48 +75,159 @@ export default function NewRoutine() {
     console.log("handleSheetChanges", index);
   }, []);
 
-  const { control, watch, handleSubmit, setValue, formState, getValues } =
-    useForm<FormValues>({
-      defaultValues: {
-        title: "",
-        description: "",
-        cadence: "daily",
-        startTime: new Date(),
-        repeatOn: [],
-        habits: [],
-      },
-      resolver: zodResolver(RoutineSchema),
-    });
+  const renderRoutineItem: ListRenderItem<Routine> = useCallback(
+    ({ item }) => (
+      <View
+        style={{
+          borderBottomWidth: 1,
+          paddingVertical: 12,
+          paddingHorizontal: 16,
+          borderBottomColor: colors.surface,
+        }}
+        className="flex flex-row justify-between items-center"
+      >
+        <View>
+          <ThemedText
+            style={{
+              color: colors.onSurfaceVariant,
+              fontWeight: "600",
+            }}
+          >
+            {item.title}
+          </ThemedText>
+          <View className="flex flex-row items-center gap-2 mt-2">
+            <View
+              style={{
+                backgroundColor: colors.outline,
+                borderRadius: 4,
+                paddingHorizontal: 8,
+                paddingVertical: 1,
+                width: 50,
+              }}
+              className="flex items-center justify-center flex-row gap-1"
+            >
+              <Text
+                style={{
+                  color: colors.onSurfaceVariant,
+                  fontSize: 10,
+                  paddingVertical: 2,
+                }}
+              >
+                {item.habits?.length} habit
+              </Text>
+            </View>
 
-  const toggleDay = (index: number) => {
-    setSelectedDays((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-    );
-  };
+            <View
+              style={{
+                backgroundColor: colors.outline,
+                borderRadius: 4,
+                paddingHorizontal: 8,
+                paddingVertical: 1,
+                width: 58,
+              }}
+              className="flex items-center justify-center flex-row gap-1"
+            >
+              <MaterialCommunityIcons
+                name="alarm"
+                size={12}
+                color={colors.onSurfaceVariant}
+              />
+              <Text
+                style={{
+                  color: colors.onSurfaceVariant,
+                  fontSize: 10,
+                  paddingVertical: 2,
+                }}
+              >
+                {item.startTime}
+              </Text>
+            </View>
 
-  const { isValid, isDirty } = formState;
-
-  console.log("Form Values", getValues());
+            <View
+              style={{
+                backgroundColor:
+                  colorScheme === "dark"
+                    ? darkAlhpa.primary
+                    : lightAlhpa.primary,
+                borderRadius: 4,
+                paddingHorizontal: 8,
+                paddingVertical: 1,
+                width: 55,
+              }}
+              className="flex items-center justify-center flex-row gap-1"
+            >
+              <MaterialCommunityIcons
+                name="repeat-variant"
+                size={12}
+                color={colors.primary}
+              />
+              <Text
+                style={{
+                  color: colors.primary,
+                  fontSize: 10,
+                  paddingVertical: 2,
+                }}
+              >
+                {item.cadence === "daily"
+                  ? "Every day"
+                  : item.cadence === "weekdays"
+                    ? "Mon - Fri"
+                    : "Custom"}
+              </Text>
+            </View>
+          </View>
+        </View>
+        <IconButton
+          icon="delete"
+          size={20}
+          iconColor={colors.error}
+          onPress={() => {
+            appDispatch(removeRoutine(item.title));
+          }}
+        />
+      </View>
+    ),
+    [colors]
+  );
 
   return (
     <Container>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={{ flex: 1 }}>
-          <ScrollView contentContainerStyle={{ paddingBottom: 0, flexGrow: 1 }}>
-            <View>
-              <Header title="Create routine" enableArrowBack />
-              <Button
-                icon={"plus"}
-                mode="outlined"
-                onPress={handlePresentModalPress}
-                style={{
-                  margin: 20,
-                }}
-              >
-                Add a routine
-              </Button>
-            </View>
-          </ScrollView>
+          <View style={{ flex: 1 }}>
+            <Header title="Create routine" enableArrowBack />
+            <Button
+              icon={"plus"}
+              mode="outlined"
+              onPress={handlePresentModalPress}
+              style={{
+                margin: 20,
+              }}
+            >
+              Add a routine
+            </Button>
+
+            <FlatList
+              data={routines}
+              renderItem={renderRoutineItem}
+              keyExtractor={(_, i) => i.toString()}
+              contentContainerStyle={{
+                paddingBottom: 20,
+              }}
+              ListEmptyComponent={
+                <ThemedText
+                  style={{
+                    textAlign: "center",
+                    marginTop: 12,
+                    color: colors.onSurfaceVariant,
+                  }}
+                >
+                  No routines added yet.
+                </ThemedText>
+              }
+              keyboardShouldPersistTaps="handled"
+            />
+          </View>
           <BottomSheetModalProvider>
             <BottomSheetModal
               ref={bottomSheetModalRef}
@@ -135,183 +246,16 @@ export default function NewRoutine() {
               keyboardBehavior="interactive"
               keyboardBlurBehavior="restore"
             >
-              <BottomSheetView
+              <BottomSheetScrollView
                 style={{
                   flex: 1,
                   padding: 20,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 32,
                 }}
+                contentContainerStyle={{ paddingBottom: 80 }}
+                keyboardShouldPersistTaps="handled"
               >
-                <View className="flex flex-col gap-6">
-                  <View className="flex flex-col gap-2">
-                    <ThemedText style={{ fontWeight: 600 }}>
-                      Routine Title *
-                    </ThemedText>
-                    <Controller
-                      control={control}
-                      name="title"
-                      render={({ field: { onChange, value } }) => (
-                        <BottomSheetTextInput
-                          placeholder="e.g. Morning routine"
-                          onChangeText={onChange}
-                          selectionColor={colors.primary}
-                          placeholderTextColor={colors.outlineVariant}
-                          autoFocus
-                          style={{
-                            height: 48,
-                            paddingHorizontal: 12,
-                            paddingVertical: 8,
-                            fontSize: 16,
-                            borderWidth: isFocused ? 2 : 1,
-                            borderColor: isFocused
-                              ? colors.primary
-                              : colors.outline,
-                            borderRadius: 4,
-                            backgroundColor: colors.surfaceVariant,
-                            color: colors.onSurface,
-                          }}
-                          onFocus={() => setIsFocused(true)}
-                          onBlur={() => setIsFocused(false)}
-                        />
-                      )}
-                    />
-                  </View>
-
-                  <Controller
-                    control={control}
-                    name="startTime"
-                    render={({ field: { value } }) => (
-                      <View className="flex flex-row items-center justify-between">
-                        <ThemedText style={{ fontWeight: 600 }}>
-                          Start Time
-                        </ThemedText>
-                        <Pressable
-                          className="px-4 rounded-md"
-                          style={{
-                            backgroundColor:
-                              colorScheme === "dark"
-                                ? darkAlhpa.primary
-                                : lightAlhpa.primary,
-                          }}
-                          onPress={() => setShowTimePicker(true)}
-                        >
-                          <ThemedText
-                            style={{
-                              fontSize: 13,
-                            }}
-                            darkColor={colors.primary}
-                            lightColor={colors.primary}
-                          >
-                            {value?.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: true,
-                            })}
-                          </ThemedText>
-                        </Pressable>
-                      </View>
-                    )}
-                  />
-
-                  <View className="flex flex-col gap-2">
-                    <ThemedText style={{ fontWeight: 600 }}>
-                      Frequency
-                    </ThemedText>
-                    <Controller
-                      control={control}
-                      name="cadence"
-                      render={({ field: { value, onChange } }) => (
-                        <View className="gap-1">
-                          <View className="flex flex-row items-center gap-2">
-                            <RadioButton
-                              value="daily"
-                              status={
-                                value === "daily" ? "checked" : "unchecked"
-                              }
-                              onPress={() => onChange("daily")}
-                            />
-                            <ThemedText>Every day</ThemedText>
-                          </View>
-                          <View className="flex flex-row items-center gap-2">
-                            <RadioButton
-                              value="weekdays"
-                              status={
-                                value === "weekdays" ? "checked" : "unchecked"
-                              }
-                              onPress={() => onChange("weekdays")}
-                            />
-                            <ThemedText>Weekdays only (Mon - Fri)</ThemedText>
-                          </View>
-                          <View className="flex flex-row items-center gap-2">
-                            <RadioButton
-                              value="specific"
-                              status={
-                                value === "specific" ? "checked" : "unchecked"
-                              }
-                              onPress={() => onChange("specific")}
-                            />
-                            <ThemedText>Specific days</ThemedText>
-                          </View>
-                        </View>
-                      )}
-                    />
-                  </View>
-                  <View className="flex flex-row items-center justify-between">
-                    <ThemedText style={{ fontWeight: 600 }}>Habits</ThemedText>
-                    <Button icon={"plus"} mode="outlined" onPress={showModal}>
-                      Add Habit
-                    </Button>
-                  </View>
-                  <Portal>
-                    <Modal
-                      visible={visible}
-                      onDismiss={hideModal}
-                      contentContainerStyle={{
-                        backgroundColor: colors.surface,
-                        padding: 20,
-                        borderRadius: 8,
-                        marginHorizontal: 20,
-                      }}
-                    >
-                      <View className="flex flex-col gap-4">
-                        <View>
-                          <View className="flex flex-col gap-2">
-                            <ThemedText style={{ fontWeight: 600 }}>
-                              Habit Title *
-                            </ThemedText>
-                            <Controller
-                              control={control}
-                              name="title"
-                              render={({ field: { onChange, value } }) => (
-                                <TextInput
-                                  mode="outlined"
-                                  placeholder="e.g Drink water"
-                                  theme={{
-                                    colors: {
-                                      background: colors.surfaceVariant,
-                                      onSurfaceVariant: colors.outlineVariant,
-                                    },
-                                  }}
-                                  onChangeText={onChange}
-                                  style={{
-                                    height: 40,
-                                  }}
-                                  autoFocus
-                                />
-                              )}
-                            />
-                          </View>
-                        </View>
-                        <Button mode="contained">Add Habit</Button>
-                      </View>
-                    </Modal>
-                  </Portal>
-                </View>
-
-                <Button mode="contained">Create Routine</Button>
-              </BottomSheetView>
+                <CreateRoutine />
+              </BottomSheetScrollView>
             </BottomSheetModal>
           </BottomSheetModalProvider>
           <View className="w-[95%] mx-auto mb-20 flex flex-row justify-between items-center">
@@ -339,3 +283,315 @@ export default function NewRoutine() {
     </Container>
   );
 }
+
+const CreateRoutine = () => {
+  const [habitTitle, setHabitTitle] = useState("");
+
+  const appDispatch = useAppDispatch();
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState,
+    getValues,
+  } = useForm<FormValues>({
+    defaultValues: {
+      title: "",
+      cadence: "daily",
+      startTime: new Date(),
+      habits: [],
+    },
+    resolver: zodResolver(RoutineSchema),
+  });
+
+  const { isValid, isDirty } = formState;
+
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const { colors } = useTheme();
+  const [isFocused, setIsFocused] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const colorScheme = useColorScheme();
+
+  const showModal = () => {
+    Keyboard.dismiss();
+    setVisible(true);
+  };
+  const hideModal = () => setVisible(false);
+
+  const handleHabitAdd = () => {
+    if (habitTitle.trim()) {
+      const currentHabits = getValues("habits") ?? [];
+      const newHabits = [...currentHabits, { title: habitTitle.trim() }];
+      setValue("habits", newHabits, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+
+      setHabitTitle("");
+      setVisible(false);
+    }
+  };
+  const onSubmit = (data: FormValues) => {
+    console.log("Form Submitted", data);
+    // Handle form submission logic here
+    const timeData = data.startTime?.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+    console.log("Selected Time:", timeData);
+
+    const payload = {
+      ...data,
+      startTime: timeData,
+    };
+    console.log({ payload });
+    appDispatch(addRoutine(payload));
+    reset({
+      title: "",
+      cadence: "daily",
+      startTime: new Date(),
+      habits: [],
+    });
+  };
+
+  const habits = watch("habits");
+  console.log({ habits });
+
+  return (
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 32,
+      }}
+    >
+      <View className="flex flex-col gap-6">
+        <View className="flex flex-col gap-2">
+          <ThemedText
+            style={{
+              fontWeight: 600,
+              color: colors.onSurfaceVariant,
+              fontSize: 14,
+            }}
+          >
+            Routine Title *
+          </ThemedText>
+          <Controller
+            control={control}
+            name="title"
+            render={({ field: { onChange, value } }) => (
+              <BottomSheetTextInput
+                placeholder="e.g. Morning routine"
+                onChangeText={onChange}
+                selectionColor={colors.primary}
+                placeholderTextColor={colors.outlineVariant}
+                autoFocus
+                style={{
+                  height: 48,
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  fontSize: 16,
+                  borderWidth: isFocused ? 2 : 1,
+                  borderColor: isFocused ? colors.primary : colors.outline,
+                  borderRadius: 4,
+                  backgroundColor: colors.surfaceVariant,
+                  color: colors.onSurface,
+                }}
+                value={value}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+              />
+            )}
+          />
+        </View>
+
+        <Controller
+          control={control}
+          name="startTime"
+          render={({ field: { value } }) => (
+            <View className="flex flex-row items-center justify-between">
+              <ThemedText
+                style={{
+                  fontWeight: 600,
+                  color: colors.onSurfaceVariant,
+                  fontSize: 14,
+                }}
+              >
+                Start Time
+              </ThemedText>
+              <Pressable
+                className="px-4 rounded-md"
+                style={{
+                  backgroundColor:
+                    colorScheme === "dark"
+                      ? darkAlhpa.primary
+                      : lightAlhpa.primary,
+                }}
+                onPress={() => setShowTimePicker(true)}
+              >
+                <ThemedText
+                  style={{
+                    fontSize: 13,
+                  }}
+                  darkColor={colors.primary}
+                  lightColor={colors.primary}
+                >
+                  {value?.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                </ThemedText>
+              </Pressable>
+            </View>
+          )}
+        />
+
+        <View className="flex flex-col gap-2">
+          <ThemedText
+            style={{
+              fontWeight: 600,
+              color: colors.onSurfaceVariant,
+              fontSize: 14,
+            }}
+          >
+            Frequency
+          </ThemedText>
+          <Controller
+            control={control}
+            name="cadence"
+            render={({ field: { value, onChange } }) => (
+              <View className="gap-1">
+                <View className="flex flex-row items-center gap-2">
+                  <RadioButton
+                    value="daily"
+                    status={value === "daily" ? "checked" : "unchecked"}
+                    onPress={() => onChange("daily")}
+                  />
+                  <ThemedText>Every day</ThemedText>
+                </View>
+                <View className="flex flex-row items-center gap-2">
+                  <RadioButton
+                    value="weekdays"
+                    status={value === "weekdays" ? "checked" : "unchecked"}
+                    onPress={() => onChange("weekdays")}
+                  />
+                  <ThemedText>Weekdays only (Mon - Fri)</ThemedText>
+                </View>
+                <View className="flex flex-row items-center gap-2">
+                  <RadioButton
+                    value="specific"
+                    status={value === "specific" ? "checked" : "unchecked"}
+                    onPress={() => onChange("specific")}
+                  />
+                  <ThemedText>Specific days</ThemedText>
+                </View>
+              </View>
+            )}
+          />
+        </View>
+        <View className="flex flex-col gap-2">
+          <View className="flex flex-row items-center justify-between">
+            <ThemedText
+              style={{
+                fontWeight: 600,
+                color: colors.onSurfaceVariant,
+                fontSize: 14,
+              }}
+            >
+              Habits
+            </ThemedText>
+            <Button icon={"plus"} mode="outlined" onPress={showModal}>
+              Add Habit
+            </Button>
+          </View>
+          <ThemedText style={{ color: colors.onSurfaceVariant, fontSize: 11 }}>
+            You can add habits to this routine. These are the actions you want
+            to perform regularly as part of this routine.
+          </ThemedText>
+        </View>
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={hideModal}
+            contentContainerStyle={{
+              backgroundColor: colors.surface,
+              padding: 20,
+              borderRadius: 8,
+              marginHorizontal: 20,
+            }}
+          >
+            <View className="flex flex-col gap-4">
+              <View>
+                <View className="flex flex-col gap-2">
+                  <ThemedText style={{ fontWeight: 600 }}>
+                    Habit Title *
+                  </ThemedText>
+
+                  <TextInput
+                    mode="outlined"
+                    placeholder="e.g Drink water"
+                    theme={{
+                      colors: {
+                        background: colors.surfaceVariant,
+                        onSurfaceVariant: colors.outlineVariant,
+                      },
+                    }}
+                    value={habitTitle}
+                    onChangeText={setHabitTitle}
+                    style={{
+                      height: 40,
+                    }}
+                    autoFocus
+                  />
+                </View>
+              </View>
+              <Button mode="contained" onPress={handleHabitAdd}>
+                Add Habit
+              </Button>
+            </View>
+          </Modal>
+        </Portal>
+        <View
+          style={{
+            flexDirection: "column",
+            paddingBottom: 20,
+          }}
+        >
+          {habits?.map((item, index) => (
+            <View
+              key={index}
+              className="flex flex-row items-center justify-between"
+              style={{ padding: 0 }}
+            >
+              <ThemedText style={{ padding: 0 }}>{item.title}</ThemedText>
+              <IconButton
+                icon="delete"
+                size={16}
+                iconColor={colors.error}
+                onPress={() => {
+                  const updated = habits.filter((h) => h.title !== item.title);
+                  setValue("habits", updated, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
+                }}
+              />
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <Button
+        mode="contained"
+        disabled={!isValid || !isDirty}
+        onPress={handleSubmit(onSubmit)}
+      >
+        Create Routine
+      </Button>
+    </View>
+  );
+};

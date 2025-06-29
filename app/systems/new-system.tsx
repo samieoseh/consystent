@@ -1,6 +1,15 @@
 import { ThemedText } from "@/components/ThemedText";
 import Container from "@/components/ui/Container";
 import Header from "@/components/ui/Header";
+import {
+  selectCreateSystemCadence,
+  selectCreateSystemDescription,
+  selectCreateSystemTitle,
+  setCadence,
+  setDescription,
+  setTitle,
+} from "@/features/createSystemSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import React from "react";
@@ -17,7 +26,7 @@ import { z } from "zod";
 const SystemSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  cadence: z.enum(["daily", "weekdays", "specific", "flexible"], {
+  cadence: z.enum(["daily", "weekdays", "specific", "manual"], {
     required_error: "Please choose how often you want to do this system",
   }),
 });
@@ -26,20 +35,37 @@ type FormValues = z.infer<typeof SystemSchema>;
 
 export default function NewSystem() {
   const { colors } = useTheme();
+  const appDispatch = useAppDispatch();
 
-  const { control, watch, handleSubmit, setValue, formState, getValues } =
-    useForm<FormValues>({
-      defaultValues: {
-        title: "",
-        description: "",
-        cadence: "daily",
-      },
-      resolver: zodResolver(SystemSchema),
-    });
+  const title = useAppSelector(selectCreateSystemTitle);
+  const description = useAppSelector(selectCreateSystemDescription);
+  const cadence = useAppSelector(selectCreateSystemCadence);
+
+  const { control, formState, getValues } = useForm<FormValues>({
+    defaultValues: {
+      title: title || "",
+      description: description || "",
+      cadence: cadence || "daily",
+    },
+    resolver: zodResolver(SystemSchema),
+  });
 
   const { isValid, isDirty } = formState;
 
   console.log("Form Values", getValues());
+
+  const onSaveContinue = () => {
+    if (!isValid || !isDirty) {
+      console.log("Form is not valid or dirty, cannot save.");
+      return;
+    }
+
+    appDispatch(setTitle(getValues().title));
+    appDispatch(setDescription(getValues().description));
+    appDispatch(setCadence(getValues().cadence));
+
+    router.push("/systems/new-routine");
+  };
 
   return (
     <Container>
@@ -53,7 +79,13 @@ export default function NewSystem() {
                   <View className="flex flex-col gap-6 py-4 px-4 mb-4">
                     {/* Title Input */}
                     <View className="flex flex-col gap-2">
-                      <ThemedText style={{ fontWeight: 600 }}>
+                      <ThemedText
+                        style={{
+                          fontWeight: 600,
+                          color: colors.onSurfaceVariant,
+                          fontSize: 14,
+                        }}
+                      >
                         System Title *
                       </ThemedText>
                       <Controller
@@ -81,8 +113,14 @@ export default function NewSystem() {
 
                     {/* Description Input */}
                     <View className="flex flex-col gap-2">
-                      <ThemedText style={{ fontWeight: 600 }}>
-                        System Title *
+                      <ThemedText
+                        style={{
+                          fontWeight: 600,
+                          color: colors.onSurfaceVariant,
+                          fontSize: 14,
+                        }}
+                      >
+                        System Description
                       </ThemedText>
                       <Controller
                         control={control}
@@ -114,7 +152,13 @@ export default function NewSystem() {
 
                     {/* Candence Input */}
                     <View className="flex flex-col gap-2">
-                      <ThemedText style={{ fontWeight: 600 }}>
+                      <ThemedText
+                        style={{
+                          fontWeight: 600,
+                          color: colors.onSurfaceVariant,
+                          fontSize: 14,
+                        }}
+                      >
                         How often do you want to do this system?
                       </ThemedText>
                       <Controller
@@ -154,11 +198,11 @@ export default function NewSystem() {
                             </View>
                             <View className="flex flex-row items-center gap-2">
                               <RadioButton
-                                value="flexible"
+                                value="manual"
                                 status={
-                                  value === "flexible" ? "checked" : "unchecked"
+                                  value === "manual" ? "checked" : "unchecked"
                                 }
-                                onPress={() => onChange("flexible")}
+                                onPress={() => onChange("manual")}
                               />
                               <ThemedText>
                                 Just when I choose to do it
@@ -170,17 +214,6 @@ export default function NewSystem() {
                     </View>
                   </View>
                 </View>
-
-                {/* {showTimePicker && (
-                  <RNDateTimePicker
-                    mode={showTimePicker === "reminder" ? "time" : "date"}
-                    value={new Date()}
-                    is24Hour={true}
-                    maximumDate={new Date(2030, 10, 20)}
-                    minimumDate={new Date(1950, 0, 1)}
-                    onChange={onChangeTime}
-                  />
-                )} */}
               </View>
             </View>
           </ScrollView>
@@ -198,9 +231,7 @@ export default function NewSystem() {
             <Button
               mode="contained"
               //className="py-1"
-              onPress={() => {
-                router.push("/systems/new-routine");
-              }}
+              onPress={onSaveContinue}
               disabled={!isValid || !isDirty}
             >
               Save & Continue
