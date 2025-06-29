@@ -1,0 +1,1 @@
+ALTER TABLE `systems` DROP COLUMN `reviewFrequency`;

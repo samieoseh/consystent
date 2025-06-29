@@ -80,16 +80,20 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Today",
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
+            <MaterialCommunityIcons
+              name="calendar-today"
+              color={color}
+              size={26}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="system"
         options={{
-          title: "Systems",
+          title: "System",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="bullseye-arrow"
@@ -100,12 +104,21 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="routine"
         options={{
-          title: "Explore",
+          title: "Routine",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="repeat" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="process"
+        options={{
+          title: "Process",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
-              name="rocket-launch"
+              name="progress-check"
               color={color}
               size={26}
             />

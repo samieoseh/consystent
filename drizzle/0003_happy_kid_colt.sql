@@ -1,0 +1,1 @@
+ALTER TABLE `goals` RENAME TO `systems`;

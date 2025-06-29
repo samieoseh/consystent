@@ -141,7 +141,7 @@ export default function NewRoutine() {
                   paddingVertical: 2,
                 }}
               >
-                {item.startTime?.hour}:{item.startTime?.minute}
+                {item.startTime}
               </Text>
             </View>
 
@@ -256,7 +256,7 @@ export default function NewRoutine() {
                 contentContainerStyle={{ paddingBottom: 80 }}
                 keyboardShouldPersistTaps="handled"
               >
-                <CreateRoutine />
+                <CreateRoutine handleSheetChanges={handleSheetChanges} />
               </BottomSheetScrollView>
             </BottomSheetModal>
           </BottomSheetModalProvider>
@@ -287,7 +287,11 @@ export default function NewRoutine() {
   );
 }
 
-const CreateRoutine = () => {
+const CreateRoutine = ({
+  handleSheetChanges,
+}: {
+  handleSheetChanges: (index: number) => void;
+}) => {
   const [habitTitle, setHabitTitle] = useState("");
 
   const appDispatch = useAppDispatch();
@@ -352,10 +356,10 @@ const CreateRoutine = () => {
   const onSubmit = (data: FormValues) => {
     const payload = {
       ...data,
-      startTime: {
-        hour: data.startTime?.getHours() ?? 7,
-        minute: data.startTime?.getMinutes() ?? 0,
-      },
+      startTime: data.startTime?.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
     appDispatch(addRoutine(payload));
     reset({
@@ -364,6 +368,7 @@ const CreateRoutine = () => {
       startTime: new Date(),
       habits: [],
     });
+    handleSheetChanges(-1);
   };
 
   const habits = watch("habits");

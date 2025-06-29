@@ -14,6 +14,9 @@ import {
   setStartDate,
 } from "@/features/createSystemSlice";
 import { darkAlhpa, lightAlhpa } from "@/lib/constants";
+import { useHabitsMutation } from "@/lib/mutations/habits";
+import { useRoutinesMutation } from "@/lib/mutations/routines";
+import { useSystemsMutations } from "@/lib/mutations/systems";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
@@ -27,6 +30,10 @@ import {
 import { Button, Switch, TextInput, useTheme } from "react-native-paper";
 
 export default function DateReminder() {
+  const { createSystemMutation } = useSystemsMutations();
+  const { createRoutineMutation } = useRoutinesMutation();
+  const { createHabitMutation } = useHabitsMutation();
+
   const appDispatch = useAppDispatch();
 
   const today = new Date();
@@ -87,10 +94,12 @@ export default function DateReminder() {
         const minute = selectedDate.getMinutes();
 
         appDispatch(
-          setReminder({
-            hour,
-            minute,
-          })
+          setReminder(
+            selectedDate.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          )
         );
       }
       setShowTimePicker(null);
@@ -117,18 +126,48 @@ export default function DateReminder() {
     appDispatch(setEndDate(newDate.toDateString()));
   };
 
-  const handleCreateSystem = () => {
-    const payload = {
-      startDate,
-      endDate,
-      reminder,
-      title,
-      description,
-      cadence,
-      routines,
-    };
+  const handleCreateSystem = async () => {
+    try {
+      // 1. Create the system
+      const system = await createSystemMutation.mutateAsync({
+        title,
+        description,
+        startDate,
+        endDate,
+        cadence,
+        isActive: 1,
+      });
 
-    console.log({ payload });
+      const systemId = system.lastInsertRowId;
+
+      if (routines) {
+        // For each routine
+        for (const routine of routines) {
+          const { habits, ...routineData } = routine;
+
+          // Create routine with the systemId
+          const createdRoutine = await createRoutineMutation.mutateAsync({
+            ...routineData,
+            startTime: routineData.startTime ?? "",
+            systemId,
+          });
+
+          const routineId = createdRoutine.lastInsertRowId;
+
+          // 3. Create habits for this routine
+          for (const habit of habits || []) {
+            await createHabitMutation.mutateAsync({
+              title: habit.title,
+              routineId,
+            });
+          }
+        }
+      }
+
+      console.log("System with routines and habits created successfully.");
+    } catch (err) {
+      console.error("Error creating system:", err);
+    }
   };
 
   useEffect(() => {
@@ -142,10 +181,12 @@ export default function DateReminder() {
   useEffect(() => {
     if (isReminderSwitchOn) {
       appDispatch(
-        setReminder({
-          hour: today.getHours(),
-          minute: today.getMinutes(),
-        })
+        setReminder(
+          today.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        )
       );
     } else {
       appDispatch(setReminder(null));
@@ -324,6 +365,7 @@ export default function DateReminder() {
             <Button
               mode="contained"
               style={{ width: "100%" }}
+              loading={createSystemMutation.isPending}
               onPress={
                 // await requestPermissions();
                 // await scheduleDailyLocalNotification(

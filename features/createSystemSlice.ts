@@ -7,19 +7,13 @@ interface CreateSystemState {
   routines?: Routine[];
   startDate: string;
   endDate: string | null;
-  reminder: {
-    hour: number;
-    minute: number;
-  } | null;
+  reminder: string | null;
 }
 
 export type Routine = {
   title: string;
   cadence: "daily" | "weekdays" | "specific";
-  startTime?: {
-    hour: number;
-    minute: number;
-  };
+  startTime?: string;
   habits?: Habit[];
 };
 
