@@ -27,7 +27,7 @@ export default function DayChip({
           backgroundColor: selected ? colors.primary : color,
         }}
       >
-        <ThemedText style={{ fontSize: 12 }}>{label}</ThemedText>
+        <ThemedText style={{ fontSize: 12, color: "#fff" }}>{label}</ThemedText>
       </View>
     </Pressable>
   );
