@@ -52,8 +52,6 @@ export default function NewSystem() {
 
   const { isValid, isDirty } = formState;
 
-  console.log("Form Values", getValues());
-
   const onSaveContinue = () => {
     if (!isValid || !isDirty) {
       console.log("Form is not valid or dirty, cannot save.");

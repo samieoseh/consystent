@@ -5,12 +5,21 @@ interface CreateSystemState {
   description?: string;
   cadence: "daily" | "weekdays" | "specific" | "manual";
   routines?: Routine[];
+  startDate: string;
+  endDate: string | null;
+  reminder: {
+    hour: number;
+    minute: number;
+  } | null;
 }
 
 export type Routine = {
   title: string;
   cadence: "daily" | "weekdays" | "specific";
-  startTime?: string;
+  startTime?: {
+    hour: number;
+    minute: number;
+  };
   habits?: Habit[];
 };
 
@@ -23,6 +32,9 @@ const initialState: CreateSystemState = {
   description: undefined,
   cadence: "daily",
   routines: [],
+  reminder: null,
+  endDate: null,
+  startDate: new Date().toDateString(),
 };
 
 const createSystemSlice = createSlice({
@@ -63,6 +75,27 @@ const createSystemSlice = createSlice({
       );
       state.routines = newRoutines;
     },
+
+    setStartDate: (
+      state,
+      action: PayloadAction<CreateSystemState["startDate"]>
+    ) => {
+      state.startDate = action.payload;
+    },
+
+    setEndDate: (
+      state,
+      action: PayloadAction<CreateSystemState["endDate"]>
+    ) => {
+      state.endDate = action.payload;
+    },
+
+    setReminder: (
+      state,
+      action: PayloadAction<CreateSystemState["reminder"]>
+    ) => {
+      state.reminder = action.payload;
+    },
   },
 });
 
@@ -72,6 +105,10 @@ export const {
   setCadence,
   addRoutine,
   removeRoutine,
+  setEndDate,
+  setStartDate,
+  setRoutines,
+  setReminder,
 } = createSystemSlice.actions;
 
 export const selectCreateSystemTitle = (state: {
@@ -89,5 +126,17 @@ export const selectCreateSystemCadence = (state: {
 export const selectCreateSystemRoutines = (state: {
   systemCreate: CreateSystemState;
 }) => state.systemCreate.routines;
+
+export const selectCreateSystemStartDate = (state: {
+  systemCreate: CreateSystemState;
+}) => state.systemCreate.startDate;
+
+export const selectCreateSystemEndDate = (state: {
+  systemCreate: CreateSystemState;
+}) => state.systemCreate.endDate;
+
+export const selectCreateSystemReminder = (state: {
+  systemCreate: CreateSystemState;
+}) => state.systemCreate.reminder;
 
 export default createSystemSlice.reducer;

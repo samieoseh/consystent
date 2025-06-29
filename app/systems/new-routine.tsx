@@ -17,7 +17,9 @@ import {
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { Text } from "@react-navigation/elements";
+import { router } from "expo-router";
 import React, { useCallback, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -139,7 +141,7 @@ export default function NewRoutine() {
                   paddingVertical: 2,
                 }}
               >
-                {item.startTime}
+                {item.startTime?.hour}:{item.startTime?.minute}
               </Text>
             </View>
 
@@ -263,7 +265,7 @@ export default function NewRoutine() {
               mode="outlined"
               //className="py-1"
               onPress={() => {
-                console.log("Create System Pressed!");
+                router.push("/systems/date-and-reminder");
               }}
             >
               Skip
@@ -272,8 +274,9 @@ export default function NewRoutine() {
               mode="contained"
               //className="py-1"
               onPress={() => {
-                //router.push("/systems/new-routine");
+                router.push("/systems/date-and-reminder");
               }}
+              disabled={routines?.length === 0}
             >
               Save & Continue
             </Button>
@@ -333,21 +336,27 @@ const CreateRoutine = () => {
       setVisible(false);
     }
   };
-  const onSubmit = (data: FormValues) => {
-    console.log("Form Submitted", data);
-    // Handle form submission logic here
-    const timeData = data.startTime?.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-    console.log("Selected Time:", timeData);
 
+  const onChangeTime = (e: any, selectedDate?: Date) => {
+    if (e.type === "dismissed") {
+      setShowTimePicker(false);
+      return;
+    }
+
+    if (selectedDate) {
+      setValue("startTime", selectedDate);
+      setShowTimePicker(false);
+    }
+  };
+
+  const onSubmit = (data: FormValues) => {
     const payload = {
       ...data,
-      startTime: timeData,
+      startTime: {
+        hour: data.startTime?.getHours() ?? 7,
+        minute: data.startTime?.getMinutes() ?? 0,
+      },
     };
-    console.log({ payload });
     appDispatch(addRoutine(payload));
     reset({
       title: "",
@@ -358,7 +367,6 @@ const CreateRoutine = () => {
   };
 
   const habits = watch("habits");
-  console.log({ habits });
 
   return (
     <View
@@ -442,10 +450,20 @@ const CreateRoutine = () => {
                   {value?.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
-                    hour12: true,
                   })}
                 </ThemedText>
               </Pressable>
+
+              {showTimePicker && (
+                <RNDateTimePicker
+                  mode={"time"}
+                  value={value ?? new Date()}
+                  is24Hour={true}
+                  maximumDate={new Date(2030, 10, 20)}
+                  minimumDate={new Date(1950, 0, 1)}
+                  onChange={onChangeTime}
+                />
+              )}
             </View>
           )}
         />

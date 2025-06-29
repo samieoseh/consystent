@@ -15,7 +15,7 @@ export default function Container({ children }: { children: ReactNode }) {
       edges={["top", "left", "right"]}
     >
       <ThemedView className="relative flex-1 pt-4" lightColor="#fff">
-        <View className="w-[95%] mx-auto relative flex-1">{children}</View>
+        <View className="w-[90%] mx-auto relative flex-1">{children}</View>
       </ThemedView>
     </SafeAreaView>
   );
