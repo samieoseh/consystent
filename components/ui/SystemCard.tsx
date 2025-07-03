@@ -46,7 +46,7 @@ export default function SystemCard({ system }: { system: System }) {
             color={colors.outlineVariant}
           />
           <ThemedText style={{ fontSize: 12, color: colors.outlineVariant }}>
-            2 routines
+            {system.routineCount} routine{system.routineCount > 1 ? "s" : ""}
           </ThemedText>
         </View>
 

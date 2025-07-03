@@ -90,7 +90,6 @@ export default function SystemScreen() {
               <View>
                 <TouchableRipple
                   onPress={() => {
-                    console.log("hey");
                     router.push(`/systems/details/${item.id}`);
                   }}
                   onLongPress={() => {
