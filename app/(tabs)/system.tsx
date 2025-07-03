@@ -44,25 +44,6 @@ export default function SystemScreen() {
 
   const today = format(new Date(), "EEEE");
 
-  const filteredSystems = systems?.filter((system) => {
-    if (system.cadence === "daily") {
-      return true;
-    }
-    if (
-      system.cadence === "weekdays" &&
-      ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].includes(today)
-    ) {
-      return true;
-    }
-    if (
-      Array.isArray(JSON.parse(system.specificDays ?? "[]")) &&
-      JSON.parse(system.specificDays ?? "[]").includes(today)
-    ) {
-      return true;
-    }
-    return false;
-  });
-
   if (isError) {
     console.error({ error });
     return null;
@@ -99,7 +80,7 @@ export default function SystemScreen() {
             </View>
           </Header>
           <FlatList
-            data={filteredSystems}
+            data={systems}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={{
               paddingBottom: 100, // so it doesn’t get hidden behind FAB
@@ -108,7 +89,10 @@ export default function SystemScreen() {
             renderItem={({ item }) => (
               <View>
                 <TouchableRipple
-                  onPress={() => {}}
+                  onPress={() => {
+                    console.log("hey");
+                    router.push(`/systems/details/${item.id}`);
+                  }}
                   onLongPress={() => {
                     setSelectedSystem(item);
                     handlePresentModalPress();
