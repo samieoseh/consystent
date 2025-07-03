@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import Container from "@/components/ui/Container";
 import Header from "@/components/ui/Header";
 import {
+  reset,
   selectCreateSystemCadence,
   selectCreateSystemDescription,
   selectCreateSystemEndDate,
@@ -138,7 +139,7 @@ export default function DateReminder() {
         isActive: 1,
       });
 
-      const systemId = system.lastInsertRowId;
+      const systemId = system[0].id;
 
       if (routines) {
         // For each routine
@@ -165,6 +166,7 @@ export default function DateReminder() {
       }
 
       console.log("System with routines and habits created successfully.");
+      appDispatch(reset());
     } catch (err) {
       console.error("Error creating system:", err);
     }

@@ -16,6 +16,9 @@ export const useSystems = () => {
           title: systems.title,
           description: systems.description,
           cadence: systems.cadence,
+          startDate: systems.startDate,
+          endDate: systems.endDate,
+          isActive: systems.isActive,
           routineCount: sql<number>`COUNT(${routines.id})`.as("routineCount"),
         })
         .from(systems)

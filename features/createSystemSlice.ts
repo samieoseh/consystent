@@ -90,6 +90,7 @@ const createSystemSlice = createSlice({
     ) => {
       state.reminder = action.payload;
     },
+    reset: () => initialState,
   },
 });
 
@@ -103,6 +104,7 @@ export const {
   setStartDate,
   setRoutines,
   setReminder,
+  reset,
 } = createSystemSlice.actions;
 
 export const selectCreateSystemTitle = (state: {

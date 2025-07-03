@@ -76,6 +76,9 @@ export default function NewRoutine() {
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
   }, []);
+  const handleSheetClose = useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+  }, []);
 
   const renderRoutineItem: ListRenderItem<Routine> = useCallback(
     ({ item }) => (
@@ -256,7 +259,7 @@ export default function NewRoutine() {
                 contentContainerStyle={{ paddingBottom: 80 }}
                 keyboardShouldPersistTaps="handled"
               >
-                <CreateRoutine handleSheetChanges={handleSheetChanges} />
+                <CreateRoutine handleSheetClose={handleSheetClose} />
               </BottomSheetScrollView>
             </BottomSheetModal>
           </BottomSheetModalProvider>
@@ -288,9 +291,9 @@ export default function NewRoutine() {
 }
 
 const CreateRoutine = ({
-  handleSheetChanges,
+  handleSheetClose,
 }: {
-  handleSheetChanges: (index: number) => void;
+  handleSheetClose: () => void;
 }) => {
   const [habitTitle, setHabitTitle] = useState("");
 
@@ -368,7 +371,7 @@ const CreateRoutine = ({
       startTime: new Date(),
       habits: [],
     });
-    handleSheetChanges(-1);
+    handleSheetClose();
   };
 
   const habits = watch("habits");
@@ -613,7 +616,7 @@ const CreateRoutine = ({
         disabled={!isValid || !isDirty}
         onPress={handleSubmit(onSubmit)}
       >
-        Create Routine
+        Create a new Routine
       </Button>
     </View>
   );

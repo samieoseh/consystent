@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { createSystem } from "../api/system";
+import { createSystem, deleteSystem } from "../api/system";
 import { SYSTEM_QUERY_KEY } from "../queries/systems";
 
 export const useSystemsMutations = () => {
@@ -16,7 +16,16 @@ export const useSystemsMutations = () => {
     },
   });
 
+  const deleteSystemMutation = useMutation({
+    mutationFn: deleteSystem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: SYSTEM_QUERY_KEY,
+      });
+    },
+  });
   return {
     createSystemMutation,
+    deleteSystemMutation,
   };
 };

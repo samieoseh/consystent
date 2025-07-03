@@ -62,7 +62,7 @@ export default function TabLayout() {
           renderIcon={({ route, focused, color }) =>
             descriptors[route.key].options.tabBarIcon?.({
               focused,
-              color,
+              color: focused ? "#fff" : color,
               size: 24,
             }) || null
           }
