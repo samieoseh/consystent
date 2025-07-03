@@ -6,8 +6,8 @@ import {
   selectCreateSystemCadence,
   selectCreateSystemDescription,
   selectCreateSystemEndDate,
-  selectCreateSystemReminder,
   selectCreateSystemRoutines,
+  selectCreateSystemSpecificDays,
   selectCreateSystemStartDate,
   selectCreateSystemTitle,
   setEndDate,
@@ -45,12 +45,12 @@ export default function DateReminder() {
   const title = useAppSelector(selectCreateSystemTitle);
   const description = useAppSelector(selectCreateSystemDescription);
   const cadence = useAppSelector(selectCreateSystemCadence);
+  const specificDays = useAppSelector(selectCreateSystemSpecificDays);
 
   const routines = useAppSelector(selectCreateSystemRoutines);
 
   const startDate = useAppSelector(selectCreateSystemStartDate);
   const endDate = useAppSelector(selectCreateSystemEndDate);
-  const reminder = useAppSelector(selectCreateSystemReminder);
 
   const [reminderTime, setReminderTime] = useState<Date | null>(today);
 
@@ -91,8 +91,6 @@ export default function DateReminder() {
 
       if (showTimePicker === "reminder" && selectedDate instanceof Date) {
         setReminderTime(selectedDate);
-        const hour = selectedDate.getHours();
-        const minute = selectedDate.getMinutes();
 
         appDispatch(
           setReminder(
@@ -136,6 +134,7 @@ export default function DateReminder() {
         startDate,
         endDate,
         cadence,
+        specificDays: JSON.stringify(specificDays),
         isActive: 1,
       });
 

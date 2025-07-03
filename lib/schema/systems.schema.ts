@@ -7,6 +7,7 @@ export const systems = sqliteTable("systems", {
   description: text("description"),
   startDate: text("startDate"),
   endDate: text("endDate"),
-  cadence: text("cadence"), // e.g., "daily", "weekly", "monthly"
+  cadence: text("cadence"), // e.g., "daily", "weekly", "specific", "custom"
   isActive: integer("isActive").default(1),
+  specificDays: text("specificDays"),
 });

@@ -12,6 +12,7 @@ import {
   BottomSheetModalProvider,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { format } from "date-fns";
 import { router } from "expo-router";
 import React, { useCallback, useRef, useState } from "react";
 import { FlatList, Pressable, Text, useColorScheme, View } from "react-native";
@@ -40,6 +41,27 @@ export default function SystemScreen() {
   const handleSheetClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
   }, []);
+
+  const today = format(new Date(), "EEEE");
+
+  const filteredSystems = systems?.filter((system) => {
+    if (system.cadence === "daily") {
+      return true;
+    }
+    if (
+      system.cadence === "weekdays" &&
+      ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].includes(today)
+    ) {
+      return true;
+    }
+    if (
+      Array.isArray(JSON.parse(system.specificDays ?? "[]")) &&
+      JSON.parse(system.specificDays ?? "[]").includes(today)
+    ) {
+      return true;
+    }
+    return false;
+  });
 
   if (isError) {
     console.error({ error });
@@ -77,7 +99,7 @@ export default function SystemScreen() {
             </View>
           </Header>
           <FlatList
-            data={systems}
+            data={filteredSystems}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={{
               paddingBottom: 100, // so it doesn’t get hidden behind FAB
