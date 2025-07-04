@@ -112,15 +112,27 @@ export default function IndexPage() {
               </View>
             </View>
 
-            <View>
-              <ThemedText style={{ fontWeight: 900 }}>Your Systems</ThemedText>
+            {filteredSystems && filteredSystems?.length > 0 ? (
+              <View>
+                <ThemedText style={{ fontWeight: 900 }}>
+                  Your Systems
+                </ThemedText>
 
-              <View className="flex flex-col gap-6 shadow-m  py-4">
-                {filteredSystems?.map((system) => (
-                  <SystemCard system={system} key={system.id} />
-                ))}
+                <View className="flex flex-col gap-6 shadow-m  py-4">
+                  {filteredSystems?.map((system) => (
+                    <SystemCard system={system} key={system.id} />
+                  ))}
+                </View>
               </View>
-            </View>
+            ) : (
+              <View className="flex items-center justify-center">
+                <ThemedText
+                  style={{ color: colors.onSurfaceVariant, fontSize: 13 }}
+                >
+                  No systems for today
+                </ThemedText>
+              </View>
+            )}
           </ThemedView>
         </Container>
       </ScrollView>
