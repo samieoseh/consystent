@@ -15,10 +15,10 @@ export default function SystemDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: systems } = useSystems();
   const system = systems?.find((system) => system.id === +id);
+  const today = new Date().toDateString();
 
   // fetch the routines for that system
   const { data: systemRoutines } = useSystemRoutines(id);
-  console.log({ systemRoutines });
 
   return (
     <SafeAreaView
@@ -90,7 +90,7 @@ export default function SystemDetails() {
                 <ThemedText
                   style={{ fontSize: 12, color: colors.outlineVariant }}
                 >
-                  3 processes
+                  {0} process
                 </ThemedText>
               </View>
             </View>
@@ -110,7 +110,11 @@ export default function SystemDetails() {
               {systemRoutines && systemRoutines.length > 0 ? (
                 <View>
                   {systemRoutines.map((routine) => (
-                    <RoutineCard routine={routine} />
+                    <RoutineCard
+                      key={routine.id}
+                      routine={routine}
+                      date={today}
+                    />
                   ))}
                 </View>
               ) : (

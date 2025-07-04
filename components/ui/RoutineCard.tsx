@@ -1,27 +1,61 @@
+import { useHabitsTrackingMutation } from "@/lib/mutations/habits-tracking";
+import { useHabitsTracking } from "@/lib/queries/habits-tracking";
 import { useRoutineHabits } from "@/lib/queries/routines";
 import { Routine } from "@/lib/typings/routines";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
 import { Checkbox, useTheme } from "react-native-paper";
 import { ThemedText } from "../ThemedText";
 
-export default function RoutineCard({ routine }: { routine: Routine }) {
+export default function RoutineCard({
+  routine,
+  date,
+}: {
+  routine: Routine;
+  date: string;
+}) {
   const { colors } = useTheme();
+  const { upsertHabitsTrackingMutation } = useHabitsTrackingMutation();
   const [isExpanded, setIsExpanded] = useState(false); // State to toggle dropdown
-  const [expandedId, setExpandedId] = useState<number | null>(null);
   const [completedHabits, setCompletedHabits] = useState<
     Record<number, boolean>
   >({}); // Track completed habits
 
-  const { data: habits } = useRoutineHabits(expandedId);
+  const { data: habits } = useRoutineHabits(isExpanded ? routine.id : null);
+  const { data: habitsTracking } = useHabitsTracking(date, routine.id);
 
   const toggleHabitCompletion = (habitId: number) => {
+    const isCompleted = !completedHabits[habitId];
+
     setCompletedHabits((prev) => ({
       ...prev,
-      [habitId]: !prev[habitId], // Toggle the completion status
+      [habitId]: isCompleted, // Toggle the completion status
     }));
+
+    upsertHabitsTrackingMutation.mutate({
+      habitId,
+      routineId: routine.id,
+      status: isCompleted ? "completed" : "pending",
+      trackingDate: new Date().toDateString(),
+      completionDate: isCompleted
+        ? new Date().toISOString().split("T")[0]
+        : null,
+    });
   };
+
+  useEffect(() => {
+    if (habitsTracking) {
+      const updatedCompletedHabits = habitsTracking.reduce(
+        (acc: Record<number, boolean>, tracking) => {
+          acc[tracking.habitId] = tracking.status === "completed";
+          return acc;
+        },
+        {}
+      );
+      setCompletedHabits(updatedCompletedHabits);
+    }
+  }, [habitsTracking]);
 
   return (
     <View
@@ -34,7 +68,6 @@ export default function RoutineCard({ routine }: { routine: Routine }) {
       <Pressable
         onPress={() => {
           setIsExpanded(!isExpanded);
-          setExpandedId(routine.id);
         }}
       >
         <View className="flex justify-between flex-row items-center">
@@ -83,7 +116,7 @@ export default function RoutineCard({ routine }: { routine: Routine }) {
           {habits && habits?.length > 0 ? (
             habits.map((habit, index) => (
               <View
-                key={index}
+                key={habit.id}
                 className="flex flex-row gap-2 items-center mb-2"
               >
                 <Checkbox

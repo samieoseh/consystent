@@ -29,7 +29,7 @@ export const useRoutineHabits = (id: number | null) => {
           routineId: habits.routineId,
         })
         .from(habits)
-        .where(eq(habits.routineId, +id)); // Fetch habits linked to the routine ID
+        .where(eq(habits.routineId, id)); // Fetch habits linked to the routine ID
 
       return result;
     },

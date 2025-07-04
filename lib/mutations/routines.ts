@@ -9,7 +9,7 @@ export const useRoutinesMutation = () => {
     mutationFn: createRoutine,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: SYSTEM_QUERY_KEY,
+        queryKey: [SYSTEM_QUERY_KEY],
       });
     },
   });

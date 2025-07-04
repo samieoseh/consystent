@@ -46,7 +46,7 @@ export const useSystemRoutines = (id: string | undefined) => {
           cadence: routines.cadence,
         })
         .from(routines)
-        .where(eq(routines.systemId, +id));
+        .where(eq(routines.systemId, parseInt(id, 10)));
 
       return result;
     },
