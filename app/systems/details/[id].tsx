@@ -10,6 +10,11 @@ import { View } from "react-native";
 import { useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+/**
+ * Displays details for a specific system based on the route parameter.
+ *
+ * Retrieves the system ID from the URL, fetches the list of systems, and renders a header with the matched system's title.
+ */
 export default function SystemDetails() {
   const { colors } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
