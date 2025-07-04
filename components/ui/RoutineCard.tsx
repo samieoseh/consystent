@@ -23,7 +23,11 @@ export default function RoutineCard({
   >({}); // Track completed habits
 
   const { data: habits } = useRoutineHabits(isExpanded ? routine.id : null);
-  const { data: habitsTracking } = useHabitsTracking(date, routine.id);
+  const {
+    data: habitsTracking,
+    isLoading: isLoadingTracking,
+    error: trackingError,
+  } = useHabitsTracking(date, routine.id);
 
   const toggleHabitCompletion = (habitId: number) => {
     const isCompleted = !completedHabits[habitId];
@@ -37,7 +41,7 @@ export default function RoutineCard({
       habitId,
       routineId: routine.id,
       status: isCompleted ? "completed" : "pending",
-      trackingDate: new Date().toDateString(),
+      trackingDate: date,
       completionDate: isCompleted
         ? new Date().toISOString().split("T")[0]
         : null,
