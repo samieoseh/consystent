@@ -19,6 +19,11 @@ import { FlatList, Pressable, Text, useColorScheme, View } from "react-native";
 import { IconButton, TouchableRipple, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+/**
+ * Displays a list of systems with options to view details, create new systems, and perform actions via a modal.
+ *
+ * Renders a screen showing all available systems, each with summary information and navigation to detail pages. Long-pressing a system opens a modal with actions such as edit, duplicate, delete, view details, and mark inactive. Includes a floating action button for creating new systems. Handles loading, error, and deletion states.
+ */
 export default function SystemScreen() {
   const { colors } = useTheme();
   const colorScheme = useColorScheme();

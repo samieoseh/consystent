@@ -5,6 +5,12 @@ import { View } from "react-native";
 import { useTheme } from "react-native-paper";
 import { ThemedText } from "../ThemedText";
 
+/**
+ * Renders a themed card displaying information about a system, including its title, optional description, cadence, routine count, a static process count, and a hardcoded progress indicator.
+ *
+ * @param system - The system object containing title, description, cadence, and routine count to display.
+ * @returns A React element representing the styled system card.
+ */
 export default function SystemCard({ system }: { system: System }) {
   const { colors } = useTheme();
   return (

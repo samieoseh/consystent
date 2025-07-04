@@ -13,6 +13,11 @@ import { ScrollView, useColorScheme, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+/**
+ * Displays a daily overview of systems filtered by their cadence and the current day.
+ *
+ * Fetches system data, filters it based on whether each system is scheduled for today, and renders an overview with the count of today's systems and completed systems. Displays a list of system cards or a message if no systems are scheduled for today. Handles error states by logging and rendering nothing.
+ */
 export default function IndexPage() {
   const { colors } = useTheme();
   const colorScheme = useColorScheme();
