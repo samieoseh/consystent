@@ -16,6 +16,7 @@ export const useSystems = () => {
           title: systems.title,
           description: systems.description,
           cadence: systems.cadence,
+          specificDays: systems.specificDays,
           startDate: systems.startDate,
           endDate: systems.endDate,
           isActive: systems.isActive,

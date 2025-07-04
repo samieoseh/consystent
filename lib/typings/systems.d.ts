@@ -4,6 +4,7 @@ export type SystemPayload = {
   startDate: string;
   endDate: string | null;
   cadence: string | null;
+  specificDays: string | null;
   isActive: number;
 };
 
@@ -12,6 +13,7 @@ export type System = {
   title: string;
   description: string | null;
   cadence: string | null;
+  specificDays: string | null;
   startDate: string | null;
   endDate: string | null;
   isActive: number | null;

@@ -78,7 +78,7 @@ export const darkTheme = {
     onSurfaceVariant: "rgb(200, 200, 200)",
 
     outline: "rgb(35, 35, 35)",
-    outlineVariant: "rgb(80, 80, 80)",
+    outlineVariant: "rgb(150, 150, 150)",
 
     shadow: "rgb(0, 0, 0)",
     scrim: "rgb(0, 0, 0)",

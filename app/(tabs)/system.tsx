@@ -12,6 +12,7 @@ import {
   BottomSheetModalProvider,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { format } from "date-fns";
 import { router } from "expo-router";
 import React, { useCallback, useRef, useState } from "react";
 import { FlatList, Pressable, Text, useColorScheme, View } from "react-native";
@@ -40,6 +41,8 @@ export default function SystemScreen() {
   const handleSheetClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
   }, []);
+
+  const today = format(new Date(), "EEEE");
 
   if (isError) {
     console.error({ error });
@@ -86,7 +89,9 @@ export default function SystemScreen() {
             renderItem={({ item }) => (
               <View>
                 <TouchableRipple
-                  onPress={() => {}}
+                  onPress={() => {
+                    router.push(`/systems/details/${item.id}`);
+                  }}
                   onLongPress={() => {
                     setSelectedSystem(item);
                     handlePresentModalPress();

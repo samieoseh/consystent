@@ -4,6 +4,7 @@ interface CreateSystemState {
   title: string;
   description?: string;
   cadence: "daily" | "weekdays" | "specific" | "manual";
+  specificDays: string[];
   routines?: Routine[];
   startDate: string;
   endDate: string | null;
@@ -25,6 +26,7 @@ const initialState: CreateSystemState = {
   title: "",
   description: undefined,
   cadence: "daily",
+  specificDays: [],
   routines: [],
   reminder: null,
   endDate: null,
@@ -48,6 +50,12 @@ const createSystemSlice = createSlice({
       state.cadence = action.payload;
     },
 
+    setSpecificDays: (
+      state,
+      action: PayloadAction<CreateSystemState["specificDays"]>
+    ) => {
+      state.specificDays = action.payload;
+    },
     setRoutines: (
       state,
       action: PayloadAction<CreateSystemState["routines"]>
@@ -98,6 +106,7 @@ export const {
   setTitle,
   setDescription,
   setCadence,
+  setSpecificDays,
   addRoutine,
   removeRoutine,
   setEndDate,
@@ -135,4 +144,7 @@ export const selectCreateSystemReminder = (state: {
   systemCreate: CreateSystemState;
 }) => state.systemCreate.reminder;
 
+export const selectCreateSystemSpecificDays = (state: {
+  systemCreate: CreateSystemState;
+}) => state.systemCreate.specificDays;
 export default createSystemSlice.reducer;

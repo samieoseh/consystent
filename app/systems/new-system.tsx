@@ -7,6 +7,7 @@ import {
   selectCreateSystemTitle,
   setCadence,
   setDescription,
+  setSpecificDays,
   setTitle,
 } from "@/features/createSystemSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
@@ -20,7 +21,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { Button, RadioButton, TextInput, useTheme } from "react-native-paper";
+import {
+  Button,
+  Checkbox,
+  RadioButton,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { z } from "zod";
 
 const SystemSchema = z.object({
@@ -29,6 +36,7 @@ const SystemSchema = z.object({
   cadence: z.enum(["daily", "weekdays", "specific", "manual"], {
     required_error: "Please choose how often you want to do this system",
   }),
+  specificDays: z.array(z.string()),
 });
 
 type FormValues = z.infer<typeof SystemSchema>;
@@ -41,16 +49,20 @@ export default function NewSystem() {
   const description = useAppSelector(selectCreateSystemDescription);
   const cadence = useAppSelector(selectCreateSystemCadence);
 
-  const { control, formState, getValues } = useForm<FormValues>({
-    defaultValues: {
-      title: title || "",
-      description: description || "",
-      cadence: cadence || "daily",
-    },
-    resolver: zodResolver(SystemSchema),
-  });
+  const { control, formState, getValues, watch, setValue } =
+    useForm<FormValues>({
+      defaultValues: {
+        title: title || "",
+        description: description || "",
+        cadence: cadence || "daily",
+        specificDays: [],
+      },
+      resolver: zodResolver(SystemSchema),
+    });
 
   const { isValid, isDirty } = formState;
+  const selectedCadence = watch("cadence");
+  const specificDays = watch("specificDays");
 
   const onSaveContinue = () => {
     if (!isValid || !isDirty) {
@@ -58,9 +70,11 @@ export default function NewSystem() {
       return;
     }
 
-    appDispatch(setTitle(getValues().title));
-    appDispatch(setDescription(getValues().description));
-    appDispatch(setCadence(getValues().cadence));
+    const values = getValues();
+    appDispatch(setTitle(values.title));
+    appDispatch(setDescription(values.description));
+    appDispatch(setCadence(values.cadence));
+    appDispatch(setSpecificDays(values.specificDays));
 
     router.push("/systems/new-routine");
   };
@@ -194,6 +208,50 @@ export default function NewSystem() {
                               />
                               <ThemedText>Specific days</ThemedText>
                             </View>
+                            {selectedCadence === "specific" && (
+                              <View className="flex flex-row flex-wrap items-center px-2">
+                                {[
+                                  "Monday",
+                                  "Tuesday",
+                                  "Wednesday",
+                                  "Thursday",
+                                  "Friday",
+                                  "Saturday",
+                                  "Sunday",
+                                ].map((day) => (
+                                  <View
+                                    key={day}
+                                    className="flex flex-row items-center gap-2"
+                                  >
+                                    <Checkbox
+                                      status={
+                                        specificDays.includes(day)
+                                          ? "checked"
+                                          : "unchecked"
+                                      }
+                                      onPress={() => {
+                                        const updatedDays =
+                                          specificDays.includes(day)
+                                            ? specificDays.filter(
+                                                (d) => d !== day
+                                              )
+                                            : [...specificDays, day];
+                                        setValue("specificDays", updatedDays);
+                                      }}
+                                      color={colors.primary}
+                                    />
+                                    <ThemedText
+                                      style={{
+                                        color: colors.outlineVariant,
+                                        fontSize: 14,
+                                      }}
+                                    >
+                                      {day}
+                                    </ThemedText>
+                                  </View>
+                                ))}
+                              </View>
+                            )}
                             <View className="flex flex-row items-center gap-2">
                               <RadioButton
                                 value="manual"
@@ -219,9 +277,7 @@ export default function NewSystem() {
             <Button
               mode="outlined"
               //className="py-1"
-              onPress={() => {
-                console.log("Create System Pressed!");
-              }}
+              onPress={() => {}}
               disabled={!isValid || !isDirty}
             >
               Cancel
