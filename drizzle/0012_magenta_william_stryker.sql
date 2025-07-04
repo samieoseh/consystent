@@ -1,0 +1,1 @@
+ALTER TABLE `habits_tracking` RENAME COLUMN "completionDate" TO "updatedAt";

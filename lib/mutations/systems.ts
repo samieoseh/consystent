@@ -10,7 +10,7 @@ export const useSystemsMutations = () => {
     mutationFn: createSystem,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: SYSTEM_QUERY_KEY,
+        queryKey: [SYSTEM_QUERY_KEY],
       });
       router.push("/system");
     },
@@ -20,7 +20,7 @@ export const useSystemsMutations = () => {
     mutationFn: deleteSystem,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: SYSTEM_QUERY_KEY,
+        queryKey: [SYSTEM_QUERY_KEY],
       });
     },
   });

@@ -1,0 +1,1 @@
+ALTER TABLE `habits_tracking` ADD `createdAt` text NOT NULL;
