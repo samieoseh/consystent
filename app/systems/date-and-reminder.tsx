@@ -30,6 +30,13 @@ import {
 } from "react-native";
 import { Button, Switch, TextInput, useTheme } from "react-native-paper";
 
+/**
+ * React Native component for configuring start date, end date, and reminder settings during system creation.
+ *
+ * Allows users to select a start date, optionally set an end date with a days offset, and enable or disable daily reminders. Handles user input, updates Redux state, and manages the creation of a system with associated routines and habits upon completion.
+ *
+ * @returns The rendered date and reminder settings UI for the system creation flow.
+ */
 export default function DateReminder() {
   const { createSystemMutation } = useSystemsMutations();
   const { createRoutineMutation } = useRoutinesMutation();

@@ -41,6 +41,13 @@ const SystemSchema = z.object({
 
 type FormValues = z.infer<typeof SystemSchema>;
 
+/**
+ * React Native component for creating a new system with a validated form.
+ *
+ * Presents a form for entering a system title, optional description, and selecting a cadence (frequency), including the option to specify particular days of the week. Form state is managed with react-hook-form and validated using a Zod schema. On successful submission, updates the global state with the form values and navigates to the next step in the system creation flow.
+ *
+ * The UI dynamically displays checkboxes for day selection when "Specific days" cadence is chosen.
+ */
 export default function NewSystem() {
   const { colors } = useTheme();
   const appDispatch = useAppDispatch();
