@@ -3,13 +3,12 @@ import { ThemedView } from "@/components/ThemedView";
 import Container from "@/components/ui/Container";
 import Header from "@/components/ui/Header";
 import SystemCard from "@/components/ui/SystemCard";
-import { useSystemsMutations } from "@/lib/mutations/systems";
+import { useRoutinesTracking } from "@/lib/queries/routines-tracking";
 import { useSystems } from "@/lib/queries/systems";
-import { System } from "@/lib/typings/systems";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { getProgressColor } from "@/lib/utils";
 import { format } from "date-fns";
-import React, { useCallback, useRef, useState } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import React, { useCallback } from "react";
+import { ScrollView, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -20,28 +19,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
  */
 export default function IndexPage() {
   const { colors } = useTheme();
-  const colorScheme = useColorScheme();
   const { data: systems, isError, error } = useSystems();
-  const [selectedSystem, setSelectedSystem] = useState<System | null>(null);
-
-  const { deleteSystemMutation } = useSystemsMutations();
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) {
-      setSelectedSystem(null);
-    }
-  }, []);
-
-  const handleSheetClose = useCallback(() => {
-    bottomSheetModalRef.current?.dismiss();
-  }, []);
 
   const today = format(new Date(), "EEEE");
+  const todayDateString = new Date().toDateString();
+
+  const { data: routinesTracking } = useRoutinesTracking(todayDateString);
 
   const filteredSystems = systems?.filter((system) => {
     if (system.cadence === "daily") {
@@ -61,6 +44,35 @@ export default function IndexPage() {
     }
     return false;
   });
+
+  const getSystemProgress = useCallback(
+    (systemId: number, routineCount: number) => {
+      const allCompletedRoutines = routinesTracking?.filter(
+        (routineTracking) =>
+          routineTracking.systemId === systemId &&
+          routineTracking.status === "completed"
+      ).length;
+
+      return (
+        (allCompletedRoutines && allCompletedRoutines > 0
+          ? allCompletedRoutines / routineCount
+          : 0) * 100
+      );
+    },
+    [routinesTracking]
+  );
+
+  const completedSystemsCount =
+    filteredSystems?.filter((system) => {
+      const completedRoutineCount = routinesTracking?.filter(
+        (tracking) =>
+          tracking.systemId === system.id && tracking.status === "completed"
+      ).length;
+
+      return (
+        completedRoutineCount === system.routineCount && system.routineCount > 0
+      );
+    }).length ?? 0;
 
   if (isError) {
     console.error({ error });
@@ -110,7 +122,7 @@ export default function IndexPage() {
                   <ThemedText
                     style={{ color: "#10B981", fontSize: 30, fontWeight: 900 }}
                   >
-                    2
+                    {completedSystemsCount}
                   </ThemedText>
                   <ThemedText style={{ fontSize: 15 }}>Completed</ThemedText>
                 </View>
@@ -124,9 +136,21 @@ export default function IndexPage() {
                 </ThemedText>
 
                 <View className="flex flex-col gap-6 shadow-m  py-4">
-                  {filteredSystems?.map((system) => (
-                    <SystemCard system={system} key={system.id} />
-                  ))}
+                  {filteredSystems?.map((system) => {
+                    const progress = getSystemProgress(
+                      system.id,
+                      system.routineCount
+                    );
+                    const progressColor = getProgressColor(progress);
+                    return (
+                      <SystemCard
+                        system={system}
+                        key={system.id}
+                        progress={progress}
+                        progressColor={progressColor}
+                      />
+                    );
+                  })}
                 </View>
               </View>
             ) : (

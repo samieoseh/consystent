@@ -71,7 +71,6 @@ const createSystemSlice = createSlice({
     },
 
     removeRoutine: (state, action: PayloadAction<string>) => {
-      console.log({ state, action });
       const newRoutines = state?.routines?.filter(
         (routine) => routine.title !== action.payload
       );

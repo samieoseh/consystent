@@ -36,7 +36,6 @@ const AppDropdown: React.FC<AppDropdownProps> = ({
   labelStyle,
 }) => {
   const { colors, dark } = useTheme();
-  console.log({ dark });
   const [isFocus, setIsFocus] = useState(false);
 
   const renderLabel = () => {

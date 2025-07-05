@@ -7,7 +7,6 @@ export const useHabitsTrackingMutation = () => {
   const upsertHabitsTrackingMutation = useMutation({
     mutationFn: upsertHabitTracking,
     onSuccess: () => {
-      console.log("success");
       queryClient.invalidateQueries({
         queryKey: [HABIT_TRACKING_QUERY_KEY],
       });

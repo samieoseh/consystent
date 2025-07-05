@@ -70,12 +70,9 @@ export default function NewRoutine() {
 
   // callbacks
   const handlePresentModalPress = useCallback(() => {
-    console.log("Presenting Bottom Sheet Modal");
     bottomSheetModalRef.current?.present();
   }, []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  const handleSheetChanges = useCallback((index: number) => {}, []);
   const handleSheetClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
   }, []);

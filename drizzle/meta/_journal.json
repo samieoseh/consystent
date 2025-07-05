@@ -127,6 +127,27 @@
       "when": 1751643892501,
       "tag": "0017_huge_power_man",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1751710194302,
+      "tag": "0018_omniscient_captain_midlands",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1751718808036,
+      "tag": "0019_famous_infant_terrible",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1751718834099,
+      "tag": "0020_jazzy_clea",
+      "breakpoints": true
     }
   ]
 }

@@ -12,7 +12,15 @@ import { ThemedText } from "../ThemedText";
  * @param system - The system object containing title, description, cadence, and routine count to display.
  * @returns A React element representing the styled system card.
  */
-export default function SystemCard({ system }: { system: System }) {
+export default function SystemCard({
+  system,
+  progress,
+  progressColor,
+}: {
+  system: System;
+  progress: number;
+  progressColor: string;
+}) {
   const { colors } = useTheme();
   return (
     <TouchableRipple
@@ -100,19 +108,23 @@ export default function SystemCard({ system }: { system: System }) {
           >
             <View
               style={[
-                { height: "100%", backgroundColor: "#10B981", borderRadius: 4 },
-                { width: "75%" },
+                {
+                  height: "100%",
+                  backgroundColor: progressColor,
+                  borderRadius: 4,
+                },
+                { width: `${progress ? progress : 0}%` },
               ]}
             />
           </View>
           <ThemedText
             style={{
               fontSize: 14,
-              color: "#10B981",
+              color: progressColor,
               fontWeight: "600",
             }}
           >
-            75%
+            {progress ? progress : 0}%
           </ThemedText>
         </View>
       </View>

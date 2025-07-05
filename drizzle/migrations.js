@@ -19,6 +19,9 @@ import m0014 from './0014_worried_hawkeye.sql';
 import m0015 from './0015_organic_reptil.sql';
 import m0016 from './0016_legal_master_chief.sql';
 import m0017 from './0017_huge_power_man.sql';
+import m0018 from './0018_omniscient_captain_midlands.sql';
+import m0019 from './0019_famous_infant_terrible.sql';
+import m0020 from './0020_jazzy_clea.sql';
 
   export default {
     journal,
@@ -40,7 +43,10 @@ m0013,
 m0014,
 m0015,
 m0016,
-m0017
+m0017,
+m0018,
+m0019,
+m0020
     }
   }
   

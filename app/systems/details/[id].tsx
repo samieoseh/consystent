@@ -111,9 +111,9 @@ export default function SystemDetails() {
               Today's Routine
             </ThemedText>
 
-            <View className="py-6">
+            <View className="py-6 ">
               {systemRoutines && systemRoutines.length > 0 ? (
-                <View>
+                <View className="flex flex-col gap-2">
                   {systemRoutines.map((routine) => (
                     <RoutineCard
                       key={routine.id}

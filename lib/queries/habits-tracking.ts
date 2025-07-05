@@ -6,9 +6,8 @@ import { habitsTracking } from "../schema/habits-tracking.schema";
 export const HABIT_TRACKING_QUERY_KEY = "habits-tracking";
 
 export const useHabitsTracking = (date: string, routineId: number) => {
-  console.log({ date, routineId });
   return useQuery({
-    queryKey: [HABIT_TRACKING_QUERY_KEY],
+    queryKey: [HABIT_TRACKING_QUERY_KEY, date, routineId],
     queryFn: async () => {
       const result = await db
         .select()

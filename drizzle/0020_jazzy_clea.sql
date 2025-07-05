@@ -1,0 +1,1 @@
+ALTER TABLE `routines_tracking` ADD `routine_id` integer NOT NULL REFERENCES routines(id);

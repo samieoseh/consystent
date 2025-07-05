@@ -1,43 +1,44 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "../db";
-import { habitsTracking } from "../schema/habits-tracking.schema";
-import { HabitTrackingPayload } from "../typings/habits";
+import { routinesTracking } from "../schema/routines-tracking.schema";
+import { RoutineTrackingPayload } from "../typings/routines";
 
-export const upsertHabitTracking = async (data: HabitTrackingPayload) => {
+export const upsertRoutineTracking = async (data: RoutineTrackingPayload) => {
   // Check if a record for the given habit and tracking date already exists
   const existingRecord = await db
     .select({
-      id: habitsTracking.id,
+      id: routinesTracking.id,
     })
-    .from(habitsTracking)
+    .from(routinesTracking)
     .where(
       and(
-        eq(habitsTracking.habitId, data.habitId),
-        eq(habitsTracking.trackingDate, data.trackingDate)
+        eq(routinesTracking.routineId, data.routineId),
+        eq(routinesTracking.trackingDate, data.trackingDate)
       )
     );
 
   if (existingRecord.length > 0) {
     // Update the existing record
     await db
-      .update(habitsTracking)
+      .update(routinesTracking)
       .set({
         status: data.status,
         completionDate: data.completionDate,
         updatedAt: new Date().toISOString(),
+        systemId: data.systemId,
       })
       .where(
         and(
-          eq(habitsTracking.habitId, data.habitId),
-          eq(habitsTracking.trackingDate, data.trackingDate)
+          eq(routinesTracking.routineId, data.routineId),
+          eq(routinesTracking.trackingDate, data.trackingDate)
         )
       );
   } else {
     // Insert a new record
 
-    await db.insert(habitsTracking).values({
-      habitId: data.habitId,
+    await db.insert(routinesTracking).values({
       routineId: data.routineId,
+      systemId: data.systemId,
       status: data.status,
       trackingDate: data.trackingDate, // Include the tracking date
       completionDate: data.completionDate,

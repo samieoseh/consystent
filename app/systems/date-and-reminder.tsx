@@ -171,7 +171,6 @@ export default function DateReminder() {
         }
       }
 
-      console.log("System with routines and habits created successfully.");
       appDispatch(reset());
     } catch (err) {
       console.error("Error creating system:", err);
