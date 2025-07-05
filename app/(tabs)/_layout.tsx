@@ -104,6 +104,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="analytics"
+        options={{
+          title: "Analytics",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="google-analytics"
+              color={color}
+              size={26}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="routine"
         options={{
           title: "Routine",

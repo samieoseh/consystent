@@ -92,11 +92,8 @@ export default function SystemScreen() {
             }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <View>
+              <View className="">
                 <TouchableRipple
-                  onPress={() => {
-                    router.push(`/systems/details/${item.id}`);
-                  }}
                   onLongPress={() => {
                     setSelectedSystem(item);
                     handlePresentModalPress();
@@ -188,6 +185,18 @@ export default function SystemScreen() {
                 />
               </View>
             )}
+            ListFooterComponent={
+              <View className="flex w-full items-center py-8 justify-center">
+                <ThemedText
+                  style={{
+                    color: colors.outlineVariant,
+                    fontSize: 12,
+                  }}
+                >
+                  Press and hold to view more options
+                </ThemedText>
+              </View>
+            }
           />
 
           <Pressable
