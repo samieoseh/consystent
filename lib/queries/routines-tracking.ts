@@ -7,7 +7,7 @@ export const ROUTINE_TRACKING_QUERY_KEY = "routines-tracking";
 
 export const useRoutinesTracking = (date: string) => {
   return useQuery({
-    queryKey: [ROUTINE_TRACKING_QUERY_KEY],
+    queryKey: [ROUTINE_TRACKING_QUERY_KEY, date],
     queryFn: async () => {
       const result = await db
         .select()
